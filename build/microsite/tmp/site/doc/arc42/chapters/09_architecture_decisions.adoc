@@ -1,0 +1,99 @@
+:jbake-status: published
+:jbake-order: 9
+:jbake-type: page_toc
+:jbake-title: Architecture Decisions
+:jbake-menu: Architecture
+
+ifndef::dtc-magic-toc[]
+:dtc-magic-toc:
+:toc:
+
+
+:toc: left
+
+++++
+<!-- endtoc -->
+++++
+endif::[]
+:filename: /chapters/09_architecture_decisions.adoc
+ifndef::imagesdir[:imagesdir: ../../images]
+
+:toc:
+
+
+
+[[section-design-decisions]]
+== Architecture Decisions
+
+=== ADR-001: Pure-Python DDS simulation over real DDS middleware
+
+**Status:** Accepted
+
+**Context:** The demo needs to run on any developer laptop without installing DDS middleware (Connext DDS, OpenDDS, CycloneDDS) which requires C++ libraries, licenses, or complex configuration.
+
+**Decision:** Implement a faithful DDS API simulation in pure Python (`dds_abstraction.py`).
+
+**Consequences:**
+* (+) Zero external dependencies; `pip install -r requirements.txt` is sufficient.
+* (+) Full control over simulated latency, drop rates, and QoS behaviors.
+* (+) Works on Linux and macOS without root/admin privileges.
+* (-) Not a real RTPS implementation; cannot interoperate with real DDS participants.
+* (-) Network latency is simulated, not measured from real hardware.
+
+=== ADR-002: Thread-per-ECU concurrency model
+
+**Status:** Accepted
+
+**Context:** ECUs must transition through states independently and in parallel to demonstrate true multicast delivery (vs CAN's sequential per-node delivery).
+
+**Decision:** Each ECU runs its state machine in a dedicated Python `threading.Thread`.
+
+**Consequences:**
+* (+) Realistic parallel state transitions; UpdateManager sees overlapping ECU progress.
+* (+) Demonstrates that one DDS `write()` triggers N concurrent processing threads.
+* (-) Python GIL limits true CPU parallelism; for I/O-bound simulation this is acceptable.
+* (-) Thread count scales linearly with ECU count; not suitable for 1000+ ECU simulation.
+
+=== ADR-003: Dual-mode operation (live + pre-recorded)
+
+**Status:** Accepted
+
+**Context:** Live demos can fail; presentation environments may not support long-running processes. Charts must be available for slide decks.
+
+**Decision:** Separate `generate_sample_data.py` produces realistic pre-recorded CSV files; `visualize_results.py` works from either live or pre-recorded data.
+
+**Consequences:**
+* (+) Presenter can use either live execution or pre-generated charts.
+* (+) Charts are deterministic and reproducible for slide decks.
+* (-) Pre-recorded data does not reflect real-time variability.
+
+=== ADR-004: AUTOSAR UCM state machine alignment
+
+**Status:** Accepted
+
+**Context:** The demo targets AUTOSAR Adaptive Platform architects and RTI Connext users. The OTA flow must be immediately recognizable.
+
+**Decision:** Map the ECU state machine directly to AUTOSAR UCM `PackageManagement` states: `IDLE → DOWNLOADING → VERIFYING → INSTALLING → REBOOTING → DONE / ERROR`.
+
+**Consequences:**
+* (+) Demo is immediately credible to AUTOSAR engineers.
+* (+) Clearly shows how `ara::com` DDS binding maps to real OTA workflows.
+* (-) The simulation simplifies timing (no real firmware binary transfer).
+
+=== ADR-005: Single DDS domain for all participants
+
+**Status:** Accepted
+
+**Context:** Simplicity of demo; multi-domain would require domain bridge configuration.
+
+**Decision:** All participants (UpdateManager + all ECUs) share `domain_id=0`.
+
+**Consequences:**
+* (+) Automatic RTPS discovery finds all participants without configuration.
+* (+) Multicast delivery works out of the box.
+* (-) No isolation between vehicle bus and diagnostics domain (noted in README as extension point).
+
+
+ifdef::arc42help[]
+
+endif::arc42help[]

@@ -1,0 +1,134 @@
+:jbake-status: published
+:jbake-order: 6
+:jbake-type: page_toc
+:jbake-title: Runtime View
+:jbake-menu: Architecture
+
+ifndef::dtc-magic-toc[]
+:dtc-magic-toc:
+:toc:
+
+
+:toc: left
+
+++++
+<!-- endtoc -->
+++++
+endif::[]
+:filename: /chapters/06_runtime_view.adoc
+ifndef::imagesdir[:imagesdir: ../../images]
+
+:toc:
+
+
+
+[[section-runtime-view]]
+== Runtime View
+
+=== Startup Sequence
+
+.Demo startup sequence
+....
+User
+  │
+  ├─► python run_demo.py --num-ecus 5 --show-comparison
+  │
+  │   run_demo.py
+  │     ├─ create_participant(domain_id=0)       [dds_abstraction]
+  │     ├─ create_topic("OTAControl", ...)
+  │     ├─ create_topic("ECUStatus", ...)
+  │     ├─ Instantiate MetricsCollector
+  │     ├─ Instantiate UpdateManager
+  │     │    └─ create_writer(OTAControl)
+  │     │    └─ create_reader(ECUStatus, on_status_update)
+  │     ├─ For i in 1..N:
+  │     │    └─ Instantiate ECU(f"ECU_{i:03d}")
+  │     │         ├─ create_participant(domain_id=0)
+  │     │         ├─ create_reader(OTAControl, on_command)
+  │     │         └─ create_writer(ECUStatus)    [starts thread]
+  │     └─ TRANSIENT_LOCAL replay: each new ECU reader receives cached
+  │          OTAControl samples (if UpdateManager already broadcast)
+  └─ (All ECU threads running in parallel)
+....
+
+=== OTA Update Runtime Scenario
+
+.OTA update sequence (happy path, 3 ECUs shown)
+....
+UpdateManager                ECU_001           ECU_002           ECU_003
+     │                          │                 │                 │
+     │  write(OTAControl,        │                 │                 │
+     │    START_UPDATE,          │                 │                 │
+     │    fw=2.0.0)              │                 │                 │
+     │─────────────────────────►│─────────────────►│─────────────────►│
+     │   (single multicast)      │                 │                 │
+     │                          │ IDLE→DOWNLOADING │                 │
+     │                          │ [publish ECUStatus]                │
+     │◄─────────────────────────│                 │                 │
+     │                          │─────────────────►│                │  (TRANSIENT_LOCAL
+     │                          │                 │ IDLE→DOWNLOADING│   replay to late
+     │                          │                 │ [publish status]│   joiner)
+     │◄──────────────────────────────────────────│                 │
+     │   ... (progress updates every ~10% of download)
+     │
+     │                          │ →VERIFYING       │                 │
+     │◄─────────────────────────│ →INSTALLING      │                 │
+     │◄─────────────────────────│ →REBOOTING       │                 │
+     │◄─────────────────────────│ →DONE            │                 │
+     │                          │                 │ →DONE            │
+     │◄──────────────────────────────────────────│                 │
+     │                          │                 │                 │→DONE
+     │◄─────────────────────────────────────────────────────────────│
+     │
+     │  All ECUs DONE → print metrics summary
+     │  save_run_results() → data/run_TIMESTAMP.csv
+....
+
+=== Error Recovery Scenario
+
+.ECU installation error (5% probability)
+....
+ECU_003
+  │
+  ├─ INSTALLING
+  │    └─ random() < 0.05 → ERROR
+  ├─ publish ECUStatus(state=ERROR, ecu_id=ECU_003)
+  │
+UpdateManager
+  │
+  ├─ Receives ECUStatus(ERROR) from ECU_003
+  ├─ Marks ECU_003 as FAILED in status table
+  ├─ Reports error count in metrics summary
+  └─ Continues monitoring remaining ECUs
+....
+
+The demo continues for all other ECUs; the error is reported in the final metrics summary. DDS Deadline QoS on `ECUStatus` (100 ms) would also trigger `on_deadline_missed` if ECU_003 silently crashes (vs CAN which requires ~1-3 s timeout detection).
+
+=== Late Joiner Scenario (TRANSIENT_LOCAL)
+
+.New ECU joining after START_UPDATE broadcast
+....
+T=0   UpdateManager broadcasts START_UPDATE via OTAControl
+T=5s  ECU_006 joins (late joiner)
+        └─ create_reader(OTAControl) triggers TRANSIENT_LOCAL replay
+        └─ ECU_006 immediately receives cached START_UPDATE sample
+        └─ ECU_006 begins DOWNLOADING without any manual re-publish
+....
+
+This is **impossible with CAN**: CAN has no durable delivery; a late-joining ECU must poll or wait for the next periodic re-broadcast.
+
+=== Processes / Threading Model
+
+[options="header",cols="1,3"]
+|===
+|Thread|Description
+| Main thread | `run_demo.py` orchestrator; runs the display loop.
+| UpdateManager thread | Monitors ECU status queue; updates ANSI table; detects completion.
+| ECU_001..N threads | One thread per ECU; executes state machine transitions with simulated delays.
+| DDS delivery thread | `dds_abstraction` internal dispatcher; applies simulated latency and routes samples to reader callbacks.
+|===
+
+
+ifdef::arc42help[]
+
+endif::arc42help[]

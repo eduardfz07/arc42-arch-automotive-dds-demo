@@ -1,0 +1,45 @@
+:jbake-status: published
+:jbake-order: 15
+:jbake-type: page_toc
+:jbake-title: Meta
+:jbake-menu: Meta
+
+ifndef::dtc-magic-toc[]
+:dtc-magic-toc:
+:toc:
+
+
+:toc: left
+
+++++
+<!-- endtoc -->
+++++
+endif::[]
+:filename: /chapters/ap3_meta.adoc
+ifndef::imagesdir[:imagesdir: ../../images]
+
+:toc:
+
+== Meta Discussions
+
+=== Scope of this Arc42 Document
+
+This arc42 document covers the **simulation architecture** of the Automotive DDS OTA Demo, not a production AUTOSAR Adaptive Platform deployment. The architectural decisions, constraints, and risks apply specifically to the Python simulation layer.
+
+For a real AUTOSAR Adaptive Platform architecture, the arc42 views would additionally need to cover:
+
+* `ara::com` service interface definitions (`.fidl` / `.fdepl`)
+* ARXML element configuration (ServiceInstance, ProvidedServiceInstance, RequiredServiceInstance)
+* Execution Management (EM) manifests for process lifecycle
+* Communication Management (CM) DDS binding configuration
+* Platform Health Management (PHM) supervision configuration
+
+=== Multi-domain Extension (Discussion)
+
+The current demo uses a single DDS domain. A production SDV would typically use:
+
+* **Domain 0:** Vehicle bus (high-speed ECU-to-ECU, OTA commands)
+* **Domain 1:** Diagnostics (UDS over DDS, PHM health data)
+* **Domain 2:** Infotainment / HMI
+
+A domain bridge (DDS Router) would route relevant topics between domains. This would add a new deployment view element and cross-cutting concept (domain routing policy).
