@@ -24,15 +24,6 @@ ifndef::imagesdir[:imagesdir: ../../images]
 * https://doctoolchain.org/docToolchain/v2.0.x/index.html[docToolchain]
 * https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/[AsciiDoc Syntax Quick Reference]
 
-=== RTI Resources
-
-* https://www.rti.com/products/connext-dds[RTI Connext DDS]
-* https://community.rti.com/documentation[RTI Connext DDS Documentation]
-
-=== Related Videos and Articles
-
-* https://youtu.be/TLcUISoEn2s?si=wZXmjffwUJGhIR8W[arc42, C4 Model & Documentation as Code — Starter Project]
-
 === Source Code
 
 * https://github.com/eduardfz07/automotive-dds-demo[automotive-dds-demo GitHub repository]
