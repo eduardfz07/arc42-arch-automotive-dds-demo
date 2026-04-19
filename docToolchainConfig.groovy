@@ -114,7 +114,7 @@ microsite.with {
     //
     // Footer Text
     // example: <small class="text-white">built with docToolchain and jBake <br /> theme: docsy</small>
-    footerText = '<small class="text-white">built with <a href="https://doctoolchain.org">docToolchain</a> and <a href="https://jbake.org">jBake</a> <br /> theme: <a href="https://www.docsy.dev/">docsy</a> <br /> author: fiego999</small>'
+    footerText = '<small class="text-white">built with <a href="https://doctoolchain.org">docToolchain</a> and <a href="https://jbake.org">jBake</a> <br /> theme: <a href="https://www.docsy.dev/">docsy</a> <br /> author: eduardfz07</small>'
     //
     // site title if no other title is given
     title = 'Automotive DDS OTA Update Coordination Demo — Architecture Documentation'

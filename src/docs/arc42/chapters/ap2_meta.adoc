@@ -31,12 +31,3 @@ The current demo uses a single DDS domain. A production SDV would typically use:
 * **Domain 2:** Infotainment / HMI
 
 A domain bridge (DDS Router) would route relevant topics between domains. This would add a new deployment view element and cross-cutting concept (domain routing policy).
-
-=== Relationship to docToolchain / KOSPA Template
-
-This document follows the structure and conventions of the KOSPA arc42 template, adapted for a pure software (non-embedded) simulation system. The main adaptations are:
-
-* Removed embedded-specific sections (MISRA-C, AUTOSAR CP toolchain, program flash layout, HSM CPU).
-* Added Python-specific deployment view (venv, pip, matplotlib).
-* Replaced DOORS/EA references with direct inline content.
-* Added DDS-specific cross-cutting concepts chapter.

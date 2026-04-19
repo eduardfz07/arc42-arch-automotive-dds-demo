@@ -92,11 +92,8 @@ include::chapters/11_technical_risks.adoc[]
 include::chapters/12_glossary.adoc[]
 
 <<<<
-// Appendix 1: Development notes
-include::chapters/ap1_development.adoc[]
+// Appendix 1: References
+include::chapters/ap1_references.adoc[]
 
-// Appendix 2: References
-include::chapters/ap2_references.adoc[]
-
-// Appendix 3: Meta discussions
-include::chapters/ap3_meta.adoc[]
+// Appendix 2: Meta discussions
+include::chapters/ap2_meta.adoc[]
