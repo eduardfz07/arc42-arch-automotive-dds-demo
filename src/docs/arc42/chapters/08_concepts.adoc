@@ -1,0 +1,118 @@
+:jbake-title: Cross-cutting Concepts
+:jbake-type: page_toc
+:jbake-status: published
+:jbake-menu: Architecture
+:jbake-order: 8
+:filename: /chapters/08_concepts.adoc
+ifndef::imagesdir[:imagesdir: ../../images]
+
+:toc:
+
+
+
+[[section-concepts]]
+
+== Cross-cutting Concepts
+
+Concepts that span across multiple modules of the demo.
+
+=== DDS QoS Policy System
+
+QoS (Quality of Service) policies govern data delivery behavior and are applied consistently across all DDS topics. They are the central cross-cutting mechanism in this architecture.
+
+.QoS policies used in the system
+[options="header",cols="1,2,2"]
+|===
+|QoS Policy|Value|Applied to
+| Reliability | `RELIABLE` | `OTAControl` (commands), `ECUStatus` (state updates)
+| Reliability | `BEST_EFFORT` | Optional demo mode; shows ~3% drop
+| Durability | `TRANSIENT_LOCAL` | `OTAControl` (late-joiner gets current command), `ECUStatus` (UCM gets latest state on reconnect)
+| Durability | `VOLATILE` | Alternative demo mode; no history
+| History | depth=10 | `RELIABLE_QOS` topics
+| History | depth=1 | `BEST_EFFORT_QOS` topics
+| Deadline | 100 ms | `ECUStatus` — distributed safety watchdog for ECU health
+| Deadline | 50 ms | `OTAControl` — OTA master liveness monitoring
+| Liveliness | 500 ms lease | All participants — ECU crash detection
+| Latency Budget | 1 ms | `CONTROL_QOS` — expected delivery budget for OTA commands
+|===
+
+**AUTOSAR Adaptive mapping:**
+
+[options="header",cols="1,2"]
+|===
+|DDS QoS|AUTOSAR ara::com mapping
+| `RELIABLE` | `FireAndReliable` method call
+| `BEST_EFFORT` | `FireAndForget` event group
+| `TRANSIENT_LOCAL` | `Field` with `GetHandler` providing cached value
+| Deadline QoS | Platform Health Management (PHM) supervision
+| Liveliness QoS | PHM alive supervision
+|===
+
+=== Simulated Network Latency Model
+
+The `dds_abstraction.py` `write()` function applies a Gaussian latency to every dispatched sample before invoking reader callbacks. This cross-cuts all DDS topics.
+
+.Latency model parameters
+[options="header",cols="1,2"]
+|===
+|Parameter|Value
+| Distribution | Gaussian (normal)
+| Mean | 2.0 ms
+| Std deviation | 0.5 ms
+| BEST_EFFORT drop probability | 3%
+|===
+
+This model produces realistic sub-5ms delivery for 5 ECUs and allows demonstration of jitter behavior in the metrics output.
+
+=== OTA State Machine (Cross-ECU Protocol)
+
+The OTA state machine is a protocol shared between the UCM Master (`update_manager.py`) and all ECUs (`ecu.py`). State transitions must be published and observed consistently.
+
+.State machine protocol
+[options="header",cols="1,2"]
+|===
+|State|Published by
+| IDLE | ECU (initial state on startup)
+| DOWNLOADING | ECU (on receipt of START_UPDATE)
+| VERIFYING | ECU (after download completes)
+| INSTALLING | ECU (after verification)
+| REBOOTING | ECU (after installation)
+| DONE | ECU (after reboot)
+| ERROR | ECU (5% probability during INSTALLING)
+|===
+
+The `ECUStateUpdate` message published on `ECUStatus` contains: `ecu_id`, `state`, `progress_pct`, `firmware_version`, `timestamp`, `latency_ms`.
+
+=== CAN 2.0B vs DDS Comparison Model
+
+The `CANBusAnalyzer` in `metrics_collector.py` is a cross-cutting analysis component that overlays CAN 2.0B overhead onto every DDS metrics run.
+
+.CAN 2.0B model parameters
+[options="header",cols="1,2"]
+|===
+|Parameter|Value
+| Bus speed | 1 Mbps
+| Max payload per frame | 8 bytes
+| OTA state update payload | 50 bytes → 7 CAN frames per update
+| Delivery model | Unicast × N ECUs (O(N) transmissions)
+| Bus load formula | `(frames_per_update × N_ECUs × bits_per_frame) / (bus_speed × period)`
+|===
+
+**Key comparison points demonstrated:**
+
+* **5 ECUs:** CAN ~25 ms delivery; DDS ~4.5 ms
+* **20 ECUs:** CAN bus load ~60% (congested); DDS <0.01%
+* **Scalability:** CAN O(N²) bus load growth; DDS O(1)
+
+=== Fault Injection
+
+The `_INSTALL_ERROR_PROB = 0.05` constant in `ecu.py` is a cross-cutting failure injection mechanism. When an ECU reaches the `INSTALLING` state, there is a 5% probability it transitions to `ERROR` instead of `REBOOTING`. This demonstrates:
+
+* DDS `RELIABLE` QoS does not prevent application-level errors (only network-level loss).
+* `MetricsCollector` captures and reports error counts alongside normal metrics.
+* The UCM Master detects errors via `ECUStatus` topic subscriptions and reports them in the summary.
+
+
+ifdef::arc42help[]
+
+endif::arc42help[]

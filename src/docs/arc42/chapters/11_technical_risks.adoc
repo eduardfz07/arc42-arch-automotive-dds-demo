@@ -1,0 +1,44 @@
+:jbake-title: Risks and Technical Debts
+:jbake-type: page_toc
+:jbake-status: published
+:jbake-menu: Architecture
+:jbake-order: 11
+:filename: /chapters/11_technical_risks.adoc
+ifndef::imagesdir[:imagesdir: ../../images]
+
+:toc:
+
+
+
+[[section-technical-risks]]
+== Risks and Technical Debts
+
+=== Risks
+
+.Technical risks
+[options="header",cols="1,2,2"]
+|===
+|ID|Risk|Mitigation
+| R1 | **Python GIL limits thread parallelism** — for large ECU counts (>50), thread scheduling overhead may distort simulated latency measurements. | Acceptable for demo purposes (≤ 20 ECUs). For high-fidelity simulation, use `asyncio` or `multiprocessing`.
+| R2 | **Simulated latency diverges from real DDS** — the Gaussian model does not capture TCP retransmission, UDP fragmentation, or real network jitter. | Clearly documented as simulation. Presenter must note this to the audience.
+| R3 | **No real RTPS wire protocol** — the system cannot interoperate with real DDS participants (Connext, CycloneDDS). | By design (ADR-001). Not a production system.
+| R4 | **matplotlib dark theme rendering differences** — chart appearance may vary on different OS / display configurations. | Test with `--generate-sample` on the target presentation machine.
+| R5 | **`_INSTALL_ERROR_PROB` stochastic behavior** — demo may occasionally show 0 errors (all ECUs succeed) or 2+ errors, making the demo unpredictable. | Presenter should run the demo 1-2 times in advance to pick a representative run for recording.
+|===
+
+=== Technical Debts
+
+.Technical debts
+[options="header",cols="1,2"]
+|===
+|ID|Debt
+| TD1 | `dds_abstraction.py` does not implement `on_deadline_missed` / `on_liveliness_changed` callbacks as callable hooks; these are logged but not wired to application-level handlers in `ecu.py` or `update_manager.py`.
+| TD2 | No unit tests are provided for `dds_abstraction.py` QoS behaviors (TRANSIENT_LOCAL replay, BEST_EFFORT drop rate distribution).
+| TD3 | Multi-domain simulation (vehicle bus vs diagnostics domain) is described in README as an extension point but not implemented.
+| TD4 | `visualize_results.py` has a hard dependency on pre-existing CSV schema; if `metrics_collector.py` schema changes, visualization breaks silently.
+|===
+
+
+ifdef::arc42help[]
+
+endif::arc42help[]

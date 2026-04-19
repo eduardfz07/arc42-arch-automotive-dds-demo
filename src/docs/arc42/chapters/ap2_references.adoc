@@ -1,0 +1,39 @@
+:jbake-title: References
+:jbake-type: page_toc
+:jbake-status: published
+:jbake-menu: References
+:jbake-order: 14
+:filename: /chapters/ap2_references.adoc
+ifndef::imagesdir[:imagesdir: ../../images]
+
+:toc:
+
+== References
+
+=== Standards and Specifications
+
+* https://www.omg.org/spec/DDS/[OMG DDS 1.4 Specification]
+* https://www.omg.org/spec/DDSI-RTPS/[OMG RTPS 2.3 Specification]
+* https://www.omg.org/spec/DDS-SECURITY/[OMG DDS Security 1.1]
+* https://www.autosar.org/standards/adaptive-platform[AUTOSAR Adaptive Platform Specification]
+* https://www.autosar.org/fileadmin/standards/R22-11/AP/AUTOSAR_SWS_CommunicationManagement.pdf[AUTOSAR SWS Communication Management (ara::com)]
+
+=== Tools and Frameworks
+
+* https://arc42.org/[arc42 — Software Architecture Documentation Template]
+* https://doctoolchain.org/docToolchain/v2.0.x/index.html[docToolchain]
+* https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/[AsciiDoc Syntax Quick Reference]
+
+=== RTI Resources
+
+* https://www.rti.com/products/connext-dds[RTI Connext DDS]
+* https://community.rti.com/documentation[RTI Connext DDS Documentation]
+
+=== Related Videos and Articles
+
+* https://youtu.be/TLcUISoEn2s?si=wZXmjffwUJGhIR8W[arc42, C4 Model & Documentation as Code — Starter Project]
+
+=== Source Code
+
+* https://github.com/eduardfz07/automotive-dds-demo[automotive-dds-demo GitHub repository]
+* https://github.com/eduardfz07/arc42-arch-automotive-dds-demo[arc42 Architecture Documentation (this document)]

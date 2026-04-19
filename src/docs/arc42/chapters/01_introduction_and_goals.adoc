@@ -1,0 +1,101 @@
+:jbake-title: Introduction and Goals
+:jbake-type: page_toc
+:jbake-status: published
+:jbake-menu: Architecture
+:jbake-order: 1
+:filename: /chapters/01_introduction_and_goals.adoc
+ifndef::imagesdir[:imagesdir: ../../images]
+
+:toc:
+
+
+
+[[section-introduction-and-goals]]
+== Introduction and Goals
+
+_This document describes the software architecture of the **Automotive DDS OTA Update Coordination Demo** — a simulation of a multi-ECU Over-the-Air (OTA) firmware update system orchestrated via DDS (Data Distribution Service) pub/sub middleware._
+
+The demo was built to show why DDS beats CAN/LIN for scalable, real-time automotive Software-Defined Vehicle (SDV) communication, specifically in the context of AUTOSAR Adaptive Platform (UCM – Update and Configuration Management).
+
+.General functionalities of the system
+[options="header",cols="1,2"]
+|===
+|Functionality|Description
+| OTA Update Coordination | The UpdateManager broadcasts a `START_UPDATE` command via DDS multicast; all ECUs in the DDS domain receive it simultaneously.
+| ECU State Machine | Each ECU transitions through a 7-state OTA lifecycle: `IDLE → DOWNLOADING → VERIFYING → INSTALLING → REBOOTING → DONE` (or `ERROR`).
+| Metrics Collection | End-to-end latency, per-ECU jitter, throughput, and bus-load are measured and compared against a CAN 2.0B model.
+| QoS Demonstration | Shows the impact of `RELIABLE` vs `BEST_EFFORT` and `TRANSIENT_LOCAL` vs `VOLATILE` DDS QoS policies.
+| Visualization | Five publication-quality charts are generated from demo run data (scalability, latency, throughput, state timeline, QoS impact).
+| CAN vs DDS Comparison | A built-in `CANBusAnalyzer` models CAN 2.0B overhead and compares it with DDS metrics side by side.
+|===
+
+
+ifdef::arc42help[]
+
+endif::arc42help[]
+
+=== Requirements Overview
+
+==== Functional Requirements
+
+[options="header",cols="1,3"]
+|===
+|ID|Requirement
+| FR1 | The system shall simulate a fleet of N automotive ECUs undergoing a coordinated OTA firmware update.
+| FR2 | The UpdateManager shall broadcast OTA commands to all ECUs using DDS multicast (one write, N recipients).
+| FR3 | Each ECU shall autonomously execute its OTA state machine and publish state transitions on the `ECUStatus` DDS topic.
+| FR4 | The system shall support configurable QoS policies (`RELIABLE`/`BEST_EFFORT`, `TRANSIENT_LOCAL`/`VOLATILE`).
+| FR5 | The system shall measure and report per-ECU latency, jitter, throughput, and bus load.
+| FR6 | The system shall compare DDS performance metrics against a CAN 2.0B model.
+| FR7 | A late-joining ECU shall automatically receive current OTA state via `TRANSIENT_LOCAL` durability — without manual re-publish.
+| FR8 | The system shall generate scalability data for 5, 10, and 20 ECU scenarios.
+|===
+
+==== Quality / Non-Functional Requirements
+
+[options="header",cols="1,3"]
+|===
+|ID|Requirement
+| QR1 | OTA command delivery latency (network) shall be ≤ 5 ms for up to 20 ECUs under DDS multicast.
+| QR2 | CAN bus load shall not exceed 60% at 20 ECUs to remain in the comparison model's valid range.
+| QR3 | The simulated DDS network delivery shall use a Gaussian latency model (mean 2 ms, stddev 0.5 ms).
+| QR4 | `BEST_EFFORT` QoS shall simulate ~3% message drop to illustrate reliability trade-offs.
+| QR5 | The ECU fault injection probability (`_INSTALL_ERROR_PROB`) shall default to 5% for resilience demo.
+| QR6 | The system shall run on Python 3.8+ with no external DDS middleware dependency.
+|===
+
+
+ifdef::arc42help[]
+
+endif::arc42help[]
+
+=== Quality Goals
+[[introduction_quality_goals]]
+
+The top quality goals for this demonstration system, in priority order:
+
+[options="header",cols="1,2,3"]
+|===
+|Priority|Quality Goal|Motivation
+| 1 | Correctness of DDS simulation | The QoS and pub/sub behaviors must accurately reflect real DDS semantics (RTPS, RELIABLE, TRANSIENT_LOCAL) so the demo is credible for automotive engineers.
+| 2 | Scalability demonstration | The system must clearly show O(1) DDS multicast vs O(N) CAN unicast behavior as ECU count grows.
+| 3 | Reproducibility | Pre-recorded sample data and deterministic visualization must work without a live demo run.
+| 4 | Clarity / Presentability | ANSI-colored real-time output and publication-quality charts are first-class outputs.
+|===
+
+
+ifdef::arc42help[]
+
+endif::arc42help[]
+
+=== Stakeholders
+
+.Stakeholders
+[options="header",cols="1,2,2"]
+|===
+|Role/Name|Contact|Expectations
+| Demo presenter / engineer | — | Runs and presents the demo; needs clear real-time output and charts.
+| Automotive software architect | — | Wants to understand DDS vs CAN trade-offs in OTA context and AUTOSAR Adaptive mapping.
+| RTI (Real-Time Innovations) | — | Understands that this is a pure-Python simulation, not a real Connext DDS deployment.
+| AUTOSAR Adaptive platform engineer | — | Expects UCM state machine to mirror `PackageManagement` states correctly.
+|===

@@ -1,0 +1,101 @@
+:jbake-title: Glossary
+:jbake-type: page_toc
+:jbake-status: published
+:jbake-menu: Architecture
+:jbake-order: 12
+:filename: /chapters/12_glossary.adoc
+ifndef::imagesdir[:imagesdir: ../../images]
+
+:toc:
+
+
+
+[[section-glossary]]
+== Glossary
+
+ifdef::arc42help[]
+
+endif::arc42help[]
+
+[cols="e,2e" options="header"]
+|===
+|Term |Definition
+
+|AUTOSAR
+|AUTomotive Open System ARchitecture. A standardization consortium and software architecture framework for automotive ECUs. Includes Classic Platform (AUTOSAR CP) and Adaptive Platform (AUTOSAR AP).
+
+|ara::com
+|AUTOSAR Adaptive Platform communication API. Provides service-oriented communication; the DDS binding maps `ara::com` service interfaces to DDS topics and types.
+
+|CAN / CAN 2.0B
+|Controller Area Network. A legacy automotive bus protocol operating at up to 1 Mbps with 8-byte payload per frame and shared-bus arbitration. Referenced in this demo as the baseline for comparison against DDS.
+
+|CDR
+|Common Data Representation. The OMG standard serialization format used by RTPS/DDS for topic data. Produces compact binary payloads (~30 bytes for ECU state updates vs 50+ bytes for CAN multi-frame).
+
+|Deadline QoS
+|A DDS QoS policy requiring publishers to write at least once per specified period. Violations trigger `on_requested_deadline_missed()` callbacks on subscribers — used here as a distributed safety watchdog.
+
+|DDS
+|Data Distribution Service. An OMG standard for data-centric pub/sub middleware. Provides QoS-governed, topic-based communication with automatic discovery. The middleware paradigm simulated in this demo.
+
+|Domain
+|A DDS logical partition. Participants in the same domain can discover and communicate with each other. Participants in different domains are isolated. This demo uses `domain_id=0`.
+
+|Durability QoS
+|Governs whether data written before a subscriber joins is made available. `TRANSIENT_LOCAL`: writer caches last N samples for late joiners. `VOLATILE`: no cache; only future samples delivered.
+
+|ECU
+|Electronic Control Unit. An embedded computer in a vehicle that controls one or more subsystems (engine, brakes, OTA update client, etc.).
+
+|Jitter
+|`max_latency - min_latency` across all ECUs in one OTA cycle. Measures fleet synchronization spread. Lower jitter = more synchronized ECU updates.
+
+|Latency Budget QoS
+|A DDS QoS policy expressing the maximum acceptable end-to-end delivery delay. Used for monitoring and reporting; does not enforce the deadline at the transport layer.
+
+|Liveliness QoS
+|A DDS QoS policy requiring participants to periodically assert their liveness. If a participant fails to assert within `lease_duration`, other participants detect the liveliness loss. Used for ECU crash detection.
+
+|LIN
+|Local Interconnect Network. A low-cost, low-speed automotive serial bus (up to 20 kbps). Used for body electronics; even more constrained than CAN for OTA.
+
+|Multicast
+|Network delivery mode where a single packet is delivered to all group members. DDS uses UDP multicast for discovery and data delivery by default. A single DDS `write()` reaches all N subscribers simultaneously (O(1)).
+
+|OTA
+|Over-the-Air. Wireless delivery of software/firmware updates to deployed devices. In automotive, OTA updates are managed by the AUTOSAR UCM module.
+
+|PHM
+|Platform Health Management. AUTOSAR Adaptive module responsible for monitoring ECU health using supervision mechanisms (Alive, Deadline, Logical). Maps to DDS Deadline and Liveliness QoS in this demo.
+
+|pub/sub
+|Publish/Subscribe. A messaging pattern where producers (publishers) send data to named topics and consumers (subscribers) receive data from topics, decoupled in space and time.
+
+|QoS
+|Quality of Service. A set of configurable parameters governing data delivery behavior in DDS: reliability, durability, deadline, liveliness, latency budget, history, etc.
+
+|Reliability QoS
+|`RELIABLE`: ACK/NACK-based delivery; no message loss. `BEST_EFFORT`: no retransmission; ~3% drop tolerated for non-critical data.
+
+|RTPS
+|Real-Time Publish-Subscribe protocol. The OMG wire protocol underlying DDS. Includes Simple Discovery Protocol (SDP) for automatic participant and endpoint discovery over UDP.
+
+|SDP
+|Simple Discovery Protocol. The RTPS mechanism by which DDS participants automatically discover each other on the network. Eliminates the need for static configuration (cf. CAN DBC files).
+
+|SDV
+|Software-Defined Vehicle. Automotive architecture paradigm where vehicle functions are increasingly implemented in software rather than dedicated hardware, requiring scalable communication middleware like DDS.
+
+|TRANSIENT_LOCAL
+|DDS Durability QoS value. The writer caches the last `history_depth` samples. When a new subscriber joins, it automatically receives the cached samples — enabling late-joiner synchronization without re-broadcast.
+
+|UCM
+|Update and Configuration Management. AUTOSAR Adaptive module responsible for OTA firmware updates. Uses DDS (via `ara::com`) for coordination between the UCM Master and UCM clients on ECUs. This demo directly models UCM behavior.
+
+|Unicast
+|Network delivery mode where a packet is sent to a single recipient. CAN is effectively unicast per recipient — the UpdateManager must send N messages to reach N ECUs (O(N)).
+
+|VOLATILE
+|DDS Durability QoS value. No sample cache; subscribers only receive samples written after they joined. No late-joiner support.
+|===

@@ -1,0 +1,60 @@
+:jbake-title: Quality Requirements
+:jbake-type: page_toc
+:jbake-status: published
+:jbake-menu: Architecture
+:jbake-order: 10
+:filename: /chapters/10_quality_requirements.adoc
+ifndef::imagesdir[:imagesdir: ../../images]
+
+:toc:
+
+
+
+[[section-quality-scenarios]]
+== Quality Requirements
+
+NOTE: Core quality constraints are defined in xref:02_architecture_constraints.adoc#_section[Architecture Constraints § Quality Requirements].
+
+=== Quality Tree
+
+The quality attributes, ordered by architectural relevance for this demonstration system:
+
+....
+Quality
+├── Correctness
+│     └── DDS QoS simulation faithfulness
+│     └── AUTOSAR UCM state machine accuracy
+├── Performance
+│     └── OTA command delivery latency (DDS ≤ 5 ms)
+│     └── CAN vs DDS scalability (O(1) vs O(N))
+├── Reliability
+│     └── RELIABLE QoS: zero message loss
+│     └── BEST_EFFORT QoS: ~3% controlled loss
+│     └── Fault injection: 5% ECU ERROR rate for resilience demo
+├── Usability
+│     └── Demo runs in < 20 s for 5-ECU scenario
+│     └── Pre-recorded mode for slide decks
+│     └── ANSI colored real-time status table
+└── Maintainability
+      └── Single-file DDS abstraction (easy to replace with real DDS)
+      └── Separate visualization module (charts decoupled from demo run)
+....
+
+=== Quality Scenarios
+
+.Quality scenarios
+[options="header",cols="1,2,3"]
+|===
+|ID|Scenario|Expected outcome
+| QS1 | Presenter runs `python run_demo.py --num-ecus 5 --show-comparison` | Demo completes in ≤ 20 s; all ECUs reach DONE; CAN vs DDS table printed.
+| QS2 | Demo run with `--qos best_effort` | ~3% message drop visible in metrics; ECU state updates occasionally lost; latency slightly lower.
+| QS3 | One ECU hits the 5% `_INSTALL_ERROR_PROB` | ERROR state displayed in ANSI table; MetricsCollector records 1 error; UpdateManager continues monitoring remaining ECUs.
+| QS4 | `generate_sample_data.py` + `visualize_results.py` run without live demo | 5 PNG charts generated in `plots/`; all charts reflect realistic DDS vs CAN data for 5/10/20 ECU scenarios.
+| QS5 | ECU joins 2 s after START_UPDATE broadcast | TRANSIENT_LOCAL delivers cached START_UPDATE immediately; ECU begins DOWNLOADING without re-broadcast.
+| QS6 | Run with `--num-ecus 20` | DDS bus load <0.01%; CAN bus load ~60%; scalability chart shows O(1) vs O(N²) curve.
+|===
+
+
+ifdef::arc42help[]
+
+endif::arc42help[]

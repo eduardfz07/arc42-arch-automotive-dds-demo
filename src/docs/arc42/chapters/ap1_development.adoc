@@ -1,0 +1,68 @@
+:jbake-title: Development
+:jbake-type: page_toc
+:jbake-status: published
+:jbake-menu: Development
+:jbake-order: 13
+:filename: /chapters/ap1_development.adoc
+ifndef::imagesdir[:imagesdir: ../../images]
+
+:toc:
+
+== Development Notes
+
+=== Extending the Demo
+
+==== Adding more ECUs
+
+[source,bash]
+----
+python run_demo.py --num-ecus 20 --duration 60
+----
+
+==== Custom QoS profile
+
+[source,python]
+----
+from dds_abstraction import QoSProfile, ReliabilityKind, DurabilityKind
+
+custom_qos = QoSProfile(
+    reliability=ReliabilityKind.RELIABLE,
+    durability=DurabilityKind.TRANSIENT_LOCAL,
+    history_depth=20,
+    deadline_ms=50.0,
+    latency_budget_ms=1.0,
+    name="Custom_StrictRealTime",
+)
+----
+
+==== Adjusting fault injection rate
+
+In `ecu.py`, modify `_INSTALL_ERROR_PROB` (default `0.05`):
+
+[source,python]
+----
+_INSTALL_ERROR_PROB = 0.10  # 10% installation failure for stress demo
+----
+
+==== Multi-domain simulation
+
+[source,python]
+----
+# Separate domains for vehicle bus vs diagnostics
+ecu1 = ECU("ECU_001", domain_id=0)  # vehicle bus
+ecu2 = ECU("ECU_002", domain_id=1)  # diagnostics domain
+----
+
+NOTE: A DDS domain bridge would be required for cross-domain communication (TD3 in technical risks).
+
+=== Replacing the DDS Simulation with Real DDS
+
+The `dds_abstraction.py` module intentionally mirrors the API of real DDS libraries. To swap in RTI Connext DDS Python API:
+
+1. Replace `create_participant()` with `dds.DomainParticipant(domain_id)`
+2. Replace `create_topic()` with `dds.Topic(participant, name, type)`
+3. Replace `create_writer()` / `create_reader()` with `dds.DataWriter` / `dds.DataReader`
+4. Replace `write(writer, data)` with `writer.write(sample)`
+5. Replace reader callbacks with `WaitSet` or listener pattern
+
+No changes to `ecu.py`, `update_manager.py`, or `metrics_collector.py` should be required.

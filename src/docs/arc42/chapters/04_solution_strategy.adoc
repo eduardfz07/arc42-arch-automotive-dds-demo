@@ -1,0 +1,32 @@
+:jbake-title: Solution Strategy
+:jbake-type: page_toc
+:jbake-status: published
+:jbake-menu: Architecture
+:jbake-order: 4
+:filename: /chapters/04_solution_strategy.adoc
+ifndef::imagesdir[:imagesdir: ../../images]
+
+:toc:
+
+
+
+[[section-solution-strategy]]
+== Solution Strategy
+
+The fundamental decisions that shape the system architecture:
+
+[options="header",cols="1,3"]
+|===
+|ID|Decision
+| SS1 | **Pure-Python DDS simulation** — no external DDS library. This makes the demo fully self-contained and portable. The `dds_abstraction.py` module provides a faithful DDS API (`create_participant`, `create_topic`, `create_writer`, `create_reader`, `write`, `shutdown`) whose behavior mirrors OMG DDS 1.4.
+| SS2 | **Pub/Sub with QoS as first-class concept** — the architecture models DDS QoS policies (RELIABLE/BEST_EFFORT, TRANSIENT_LOCAL/VOLATILE, Deadline, Liveliness, Latency Budget) as runtime-configurable parameters, not hard-coded behavior.
+| SS3 | **Thread-per-ECU concurrency model** — each ECU runs its state machine in a dedicated Python thread, allowing realistic parallel state transitions and demonstrating true multicast delivery (single write → N concurrent transitions).
+| SS4 | **Dual-mode operation** — the system supports both a live demo run (`run_demo.py`) and a pre-recorded mode (`generate_sample_data.py` + `visualize_results.py`), decoupling presentation from live execution risk.
+| SS5 | **AUTOSAR UCM state machine alignment** — the ECU state machine (`IDLE → DOWNLOADING → VERIFYING → INSTALLING → REBOOTING → DONE/ERROR`) directly mirrors the AUTOSAR Adaptive UCM `PackageManagement` state machine, making the demo directly relevant to AUTOSAR Adaptive Platform architects.
+| SS6 | **Metrics as first-class outputs** — `MetricsCollector` and `CANBusAnalyzer` are separate modules that record, analyze, and export data independently from the demo orchestration, enabling offline comparison and chart generation.
+|===
+
+
+ifdef::arc42help[]
+
+endif::arc42help[]

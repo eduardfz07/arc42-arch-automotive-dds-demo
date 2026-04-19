@@ -1,0 +1,54 @@
+:jbake-title: Architecture Constraints
+:jbake-type: page_toc
+:jbake-status: published
+:jbake-menu: Architecture
+:jbake-order: 2
+:filename: /chapters/02_architecture_constraints.adoc
+ifndef::imagesdir[:imagesdir: ../../images]
+
+:toc:
+
+
+
+[[section-architecture-constraints]]
+== Architecture Constraints
+
+=== Technical Constraints
+
+[options="header",cols="1,3"]
+|===
+|ID|Constraint
+| TC1 | The system must be implemented in **Python 3.8+** with no external DDS middleware (no Connext DDS, no OpenDDS, no CycloneDDS). All DDS behaviors are simulated in pure Python.
+| TC2 | The system must run on **Linux** (Ubuntu 20.04+) or macOS without special drivers or hardware.
+| TC3 | All DDS pub/sub, QoS, and RTPS discovery behaviors are **simulated** within the `dds_abstraction.py` module. The simulation must remain faithful to OMG DDS 1.4 semantics.
+| TC4 | Network transport is simulated using a **Gaussian latency model** (mean 2 ms, stddev 0.5 ms) and in-process message queues. No real UDP/multicast sockets are used.
+| TC5 | The ECU state machine must mirror the **AUTOSAR UCM `PackageManagement`** states: `IDLE → DOWNLOADING → VERIFYING → INSTALLING → REBOOTING → DONE / ERROR`.
+| TC6 | Python package dependencies are limited to those listed in `requirements.txt` (numpy, pandas, matplotlib, scipy, colorama).
+|===
+
+=== Organizational Constraints
+
+[options="header",cols="1,3"]
+|===
+|ID|Constraint
+| OC1 | The project is a **demonstration / educational artifact** — not a production system. MIT License applies.
+| OC2 | The demo must be executable in **< 20 seconds** for a 5-ECU scenario to be suitable for live presentation.
+| OC3 | Pre-recorded sample data must be available so visualization can run without a live demo execution (suitable for screen recording / slides).
+|===
+
+=== Quality Requirements
+
+[options="header",cols="1,2,2"]
+|===
+|ID|Quality Attribute|Target
+| QC1 | Latency (DDS multicast, 5 ECUs) | ≤ 5 ms network delivery
+| QC2 | CAN bus load (20 ECUs) | ~60% (congested threshold)
+| QC3 | BEST_EFFORT drop rate | ~3%
+| QC4 | Safety watchdog (Deadline QoS, ECUStatus) | 100 ms deadline
+| QC5 | Liveliness lease duration | 500 ms (ECU crash detection)
+|===
+
+
+ifdef::arc42help[]
+
+endif::arc42help[]

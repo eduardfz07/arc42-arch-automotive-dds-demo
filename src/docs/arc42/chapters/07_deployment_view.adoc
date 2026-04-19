@@ -1,0 +1,121 @@
+:jbake-title: Deployment View
+:jbake-type: page_toc
+:jbake-status: published
+:jbake-menu: Architecture
+:jbake-order: 7
+:filename: /chapters/07_deployment_view.adoc
+ifndef::imagesdir[:imagesdir: ../../images]
+
+:toc:
+
+
+
+[[section-deployment-view]]
+
+
+== Deployment View
+
+NOTE: This is a pure software simulation. All "hardware" is the host machine running the Python interpreter.
+
+=== Runtime Infrastructure
+
+.Deployment diagram
+....
+┌─────────────────────────────────────────────────────────────────┐
+│                   Host Machine (Linux / macOS)                   │
+│                                                                   │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │              Python 3.8+ Virtual Environment             │    │
+│  │                                                           │    │
+│  │  run_demo.py                                              │    │
+│  │    ├─ update_manager.py                                   │    │
+│  │    │    └─ dds_abstraction.py (in-process DDS)           │    │
+│  │    ├─ ecu.py × N  (threads)                              │    │
+│  │    │    └─ dds_abstraction.py (shared module)            │    │
+│  │    └─ metrics_collector.py                               │    │
+│  │                                                           │    │
+│  │  visualize_results.py (separate invocation)              │    │
+│  │  generate_sample_data.py (separate invocation)           │    │
+│  └─────────────────────────────────────────────────────────┘    │
+│                                                                   │
+│  ┌─────────────┐    ┌──────────────┐                            │
+│  │  data/ (CSV)│    │  plots/ (PNG)│                            │
+│  └─────────────┘    └──────────────┘                            │
+└─────────────────────────────────────────────────────────────────┘
+....
+
+=== Software Environment
+
+==== Python Runtime
+
+[options="header",cols="1,2"]
+|===
+|Component|Version / Notes
+| Python | 3.8+ (CPython)
+| Virtual environment | `.venv/` created by `setup.sh` or manually with `python3 -m venv`
+| numpy | Array operations for metrics and simulation data
+| pandas | DataFrame management for metrics export / CSV
+| matplotlib | Chart generation (dark theme, publication-quality)
+| scipy | Statistical analysis (violin plots, Gaussian latency)
+| colorama | Cross-platform ANSI color output for status table
+|===
+
+==== Directory Layout
+
+[source]
+----
+automotive-dds-demo/
+├── dds_abstraction.py      # Pure-Python DDS simulation layer
+├── ecu.py                  # Simulated ECU with OTA state machine
+├── update_manager.py       # OTA Update Coordinator (UCM Master)
+├── metrics_collector.py    # Metrics & CAN vs DDS analysis
+├── run_demo.py             # Main demo orchestrator
+├── visualize_results.py    # Matplotlib visualization suite
+├── generate_sample_data.py # Pre-recorded sample data generator
+├── requirements.txt        # Python dependencies
+├── setup.sh                # Linux setup script
+├── README.md
+├── data/                   # Generated CSV metrics (gitignored)
+└── plots/                  # Generated PNG charts (gitignored)
+----
+
+=== Development Environment
+
+==== Setup (Linux)
+
+[source,bash]
+----
+git clone https://github.com/eduardfz07/automotive-dds-demo.git
+cd automotive-dds-demo
+chmod +x setup.sh && ./setup.sh
+----
+
+==== Setup (manual)
+
+[source,bash]
+----
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python generate_sample_data.py
+----
+
+=== Test / Demo Environment
+
+[options="header",cols="1,2"]
+|===
+|Mode|Command
+| Live demo (5 ECUs) | `python run_demo.py --num-ecus 5 --show-comparison`
+| Live demo (10 ECUs) | `python run_demo.py --num-ecus 10 --firmware 3.0.0`
+| BEST_EFFORT QoS demo | `python run_demo.py --num-ecus 5 --qos best_effort`
+| Pre-recorded charts | `python visualize_results.py --generate-sample`
+| Sample data only | `python generate_sample_data.py`
+|===
+
+=== Planned Resources
+
+No external infrastructure (cloud, CI/CD, databases) is required or planned for this demonstration project.
+
+
+ifdef::arc42help[]
+
+endif::arc42help[]
