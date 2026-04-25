@@ -493,22 +493,18 @@
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">QR2</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CAN bus load shall not exceed 60% at 20 ECUs to remain in the comparison model&#8217;s valid range.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">QR3</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The simulated DDS network delivery shall use a Gaussian latency model (mean 2 ms, stddev 0.5 ms).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">QR4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">QR3</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>BEST_EFFORT</code> QoS shall simulate ~3% message drop to illustrate reliability trade-offs.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">QR5</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The ECU fault injection probability (<code>_INSTALL_ERROR_PROB</code>) shall default to 5% for resilience demo.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">QR4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The ECU fault injection probability (<code>_INSTALL_ERROR_PROB</code>) shall default to 0% for resilience demo. Error can be injected through arguments in bash.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">QR6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">QR5</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The system shall run on Python 3.8+ with no external DDS middleware dependency.</p></td>
 </tr>
 </tbody>
@@ -585,7 +581,7 @@
 <td class="tableblock halign-left valign-top"><p class="tableblock">Wants to understand DDS vs CAN trade-offs in OTA context and AUTOSAR Adaptive mapping.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">RTI (Real-Time Innovations)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Technical target audience</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">—</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Understands that this is a pure-Python simulation, not a real Connext DDS deployment.</p></td>
 </tr>

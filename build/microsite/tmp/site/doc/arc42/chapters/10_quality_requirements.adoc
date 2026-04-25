@@ -60,10 +60,9 @@ Quality
 |ID|Scenario|Expected outcome
 | QS1 | Presenter runs `python run_demo.py --num-ecus 5 --show-comparison` | Demo completes in ≤ 20 s; all ECUs reach DONE; CAN vs DDS table printed.
 | QS2 | Demo run with `--qos best_effort` | ~3% message drop visible in metrics; ECU state updates occasionally lost; latency slightly lower.
-| QS3 | One ECU hits the 5% `_INSTALL_ERROR_PROB` | ERROR state displayed in ANSI table; MetricsCollector records 1 error; UpdateManager continues monitoring remaining ECUs.
+| QS3 | One ECU hits the `_INSTALL_ERROR_PROB` or error injection | ERROR state displayed in ANSI table; MetricsCollector records 1 error; UpdateManager continues monitoring remaining ECUs.
 | QS4 | `generate_sample_data.py` + `visualize_results.py` run without live demo | 5 PNG charts generated in `plots/`; all charts reflect realistic DDS vs CAN data for 5/10/20 ECU scenarios.
 | QS5 | ECU joins 2 s after START_UPDATE broadcast | TRANSIENT_LOCAL delivers cached START_UPDATE immediately; ECU begins DOWNLOADING without re-broadcast.
-| QS6 | Run with `--num-ecus 20` | DDS bus load <0.01%; CAN bus load ~60%; scalability chart shows O(1) vs O(N²) curve.
 |===
 
 

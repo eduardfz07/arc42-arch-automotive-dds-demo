@@ -445,7 +445,7 @@ Core quality constraints are defined in <a href="02_architecture_constraints.htm
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">QS3</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">One ECU hits the 5% <code>_INSTALL_ERROR_PROB</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">One ECU hits the <code>_INSTALL_ERROR_PROB</code> or error injection</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ERROR state displayed in ANSI table; MetricsCollector records 1 error; UpdateManager continues monitoring remaining ECUs.</p></td>
 </tr>
 <tr>
@@ -457,11 +457,6 @@ Core quality constraints are defined in <a href="02_architecture_constraints.htm
 <td class="tableblock halign-left valign-top"><p class="tableblock">QS5</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ECU joins 2 s after START_UPDATE broadcast</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">TRANSIENT_LOCAL delivers cached START_UPDATE immediately; ECU begins DOWNLOADING without re-broadcast.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">QS6</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Run with <code>--num-ecus 20</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">DDS bus load &lt;0.01%; CAN bus load ~60%; scalability chart shows O(1) vs O(N²) curve.</p></td>
 </tr>
 </tbody>
 </table>

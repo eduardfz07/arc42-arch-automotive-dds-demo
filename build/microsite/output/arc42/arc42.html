@@ -380,6 +380,7 @@
 <li><a href="#_standards_and_specifications">13.1. Standards and Specifications</a></li>
 <li><a href="#_tools_and_frameworks">13.2. Tools and Frameworks</a></li>
 <li><a href="#_source_code">13.3. Source Code</a></li>
+<li><a href="#_presentation">13.4. Presentation</a></li>
 </ul>
 </li>
 <li><a href="#_meta_discussions">14. Meta Discussions</a>
@@ -558,22 +559,18 @@ See <a href="https://arc42.org" class="bare">https://arc42.org</a>.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">QR2</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CAN bus load shall not exceed 60% at 20 ECUs to remain in the comparison model&#8217;s valid range.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">QR3</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The simulated DDS network delivery shall use a Gaussian latency model (mean 2 ms, stddev 0.5 ms).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">QR4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">QR3</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>BEST_EFFORT</code> QoS shall simulate ~3% message drop to illustrate reliability trade-offs.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">QR5</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The ECU fault injection probability (<code>_INSTALL_ERROR_PROB</code>) shall default to 5% for resilience demo.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">QR4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The ECU fault injection probability (<code>_INSTALL_ERROR_PROB</code>) shall default to 0% for resilience demo. Error can be injected through arguments in bash.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">QR6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">QR5</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The system shall run on Python 3.8+ with no external DDS middleware dependency.</p></td>
 </tr>
 </tbody>
@@ -650,7 +647,7 @@ See <a href="https://arc42.org" class="bare">https://arc42.org</a>.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Wants to understand DDS vs CAN trade-offs in OTA context and AUTOSAR Adaptive mapping.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">RTI (Real-Time Innovations)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Technical target audience</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">—</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Understands that this is a pure-Python simulation, not a real Connext DDS deployment.</p></td>
 </tr>
@@ -762,7 +759,7 @@ See <a href="https://arc42.org" class="bare">https://arc42.org</a>.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">QC2</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">CAN bus load (20 ECUs)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">~60% (congested threshold)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">~35% (congested threshold)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">QC3</p></td>
@@ -1124,7 +1121,7 @@ See <a href="https://arc42.org" class="bare">https://arc42.org</a>.</p>
 <div class="content">
 <pre>IDLE ──► DOWNLOADING ──► VERIFYING ──► INSTALLING ──► REBOOTING ──► DONE
                                              │
-                                             └──► ERROR (5% probability)</pre>
+                                             └──► ERROR (n% probability)</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1157,7 +1154,7 @@ See <a href="https://arc42.org" class="bare">https://arc42.org</a>.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>_INSTALL_ERROR_PROB</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">0.05 (5% installation failure rate, configurable)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.00 (0% installation failure rate, configurable)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>ECUStatus</code> deadline</p></td>
@@ -1287,6 +1284,25 @@ See <a href="https://arc42.org" class="bare">https://arc42.org</a>.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>--duration N</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Max demo duration in seconds (default: 30)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>--inject-failure N</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ECU to inject the failure into (default: None)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>--failure-at N</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Time after which the --inject-failure ECU shall fail
+(default: 3)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>--late-join-count N</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of ECUs that shall join the update process late
+(default: 0)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>--late-join-delay N</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Time after which the late joining ECUs shall join
+(default: 3)</p></td>
 </tr>
 </tbody>
 </table>
@@ -1857,7 +1873,7 @@ python generate_sample_data.py</code></pre>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ERROR</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ECU (5% probability during INSTALLING)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ECU (n% probability during INSTALLING)</p></td>
 </tr>
 </tbody>
 </table>
@@ -2115,7 +2131,7 @@ Core quality constraints are defined in <a href="02_architecture_constraints.htm
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">QS3</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">One ECU hits the 5% <code>_INSTALL_ERROR_PROB</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">One ECU hits the <code>_INSTALL_ERROR_PROB</code> or error injection</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ERROR state displayed in ANSI table; MetricsCollector records 1 error; UpdateManager continues monitoring remaining ECUs.</p></td>
 </tr>
 <tr>
@@ -2127,11 +2143,6 @@ Core quality constraints are defined in <a href="02_architecture_constraints.htm
 <td class="tableblock halign-left valign-top"><p class="tableblock">QS5</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ECU joins 2 s after START_UPDATE broadcast</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">TRANSIENT_LOCAL delivers cached START_UPDATE immediately; ECU begins DOWNLOADING without re-broadcast.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">QS6</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Run with <code>--num-ecus 20</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">DDS bus load &lt;0.01%; CAN bus load ~60%; scalability chart shows O(1) vs O(N²) curve.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2181,7 +2192,7 @@ Core quality constraints are defined in <a href="02_architecture_constraints.htm
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">R5</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong><code>_INSTALL_ERROR_PROB</code> stochastic behavior</strong> — demo may occasionally show 0 errors (all ECUs succeed) or 2+ errors, making the demo unpredictable.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong> If <code>_INSTALL_ERROR_PROB</code> &gt; 0, stochastic behavior</strong> — demo may occasionally show 0 errors (all ECUs succeed) or 2+ errors, making the demo unpredictable.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Presenter should run the demo 1-2 times in advance to pick a representative run for recording.</p></td>
 </tr>
 </tbody>
@@ -2398,6 +2409,16 @@ Core quality constraints are defined in <a href="02_architecture_constraints.htm
 </li>
 <li>
 <p><a href="https://github.com/eduardfz07/arc42-arch-automotive-dds-demo">arc42 Architecture Documentation (this document)</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_presentation">13.4. Presentation</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>* <a href="https://github.com/eduardfz07/presentation-automotive-dds-demo">Slides for automotive-dds-demo presentation</a></p>
 </li>
 </ul>
 </div>

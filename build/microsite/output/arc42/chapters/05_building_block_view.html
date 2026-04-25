@@ -554,7 +554,7 @@
 <div class="content">
 <pre>IDLE ──► DOWNLOADING ──► VERIFYING ──► INSTALLING ──► REBOOTING ──► DONE
                                              │
-                                             └──► ERROR (5% probability)</pre>
+                                             └──► ERROR (n% probability)</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -587,7 +587,7 @@
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>_INSTALL_ERROR_PROB</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">0.05 (5% installation failure rate, configurable)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.00 (0% installation failure rate, configurable)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>ECUStatus</code> deadline</p></td>
@@ -717,6 +717,25 @@
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>--duration N</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Max demo duration in seconds (default: 30)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>--inject-failure N</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ECU to inject the failure into (default: None)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>--failure-at N</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Time after which the --inject-failure ECU shall fail
+(default: 3)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>--late-join-count N</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of ECUs that shall join the update process late
+(default: 0)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>--late-join-delay N</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Time after which the late joining ECUs shall join
+(default: 3)</p></td>
 </tr>
 </tbody>
 </table>

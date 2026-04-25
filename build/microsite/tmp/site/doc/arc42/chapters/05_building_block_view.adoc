@@ -106,7 +106,7 @@ ifndef::imagesdir[:imagesdir: ../../images]
 ....
 IDLE ──► DOWNLOADING ──► VERIFYING ──► INSTALLING ──► REBOOTING ──► DONE
                                              │
-                                             └──► ERROR (5% probability)
+                                             └──► ERROR (n% probability)
 ....
 
 **DDS role:**
@@ -119,7 +119,7 @@ IDLE ──► DOWNLOADING ──► VERIFYING ──► INSTALLING ──► RE
 [options="header",cols="1,2"]
 |===
 |Parameter|Value
-| `_INSTALL_ERROR_PROB` | 0.05 (5% installation failure rate, configurable)
+| `_INSTALL_ERROR_PROB` | 0.00 (0% installation failure rate, configurable)
 | `ECUStatus` deadline | 100 ms
 | `OTAControl` deadline | 50 ms
 | Liveliness lease | 500 ms
@@ -169,6 +169,13 @@ IDLE ──► DOWNLOADING ──► VERIFYING ──► INSTALLING ──► RE
 | `--qos {reliable,best_effort}` | QoS mode for OTA commands (default: reliable)
 | `--show-comparison` | Run and display CAN vs DDS comparison table
 | `--duration N` | Max demo duration in seconds (default: 30)
+| `--inject-failure N` | ECU to inject the failure into (default: None)
+| `--failure-at N` | Time after which the --inject-failure ECU shall fail
+(default: 3)
+| `--late-join-count N` | Number of ECUs that shall join the update process late
+(default: 0)
+| `--late-join-delay N` | Time after which the late joining ECUs shall join
+(default: 3)
 |===
 
 ==== `visualize_results.py` — Visualization Suite

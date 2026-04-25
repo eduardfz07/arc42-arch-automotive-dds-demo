@@ -40,3 +40,6 @@ ifndef::imagesdir[:imagesdir: ../../images]
 
 * https://github.com/eduardfz07/automotive-dds-demo[automotive-dds-demo GitHub repository]
 * https://github.com/eduardfz07/arc42-arch-automotive-dds-demo[arc42 Architecture Documentation (this document)]
+
+=== Presentation
+* * https://github.com/eduardfz07/presentation-automotive-dds-demo[Slides for automotive-dds-demo presentation]
