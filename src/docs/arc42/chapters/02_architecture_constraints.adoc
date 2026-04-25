@@ -42,7 +42,7 @@ ifndef::imagesdir[:imagesdir: ../../images]
 |===
 |ID|Quality Attribute|Target
 | QC1 | Latency (DDS multicast, 5 ECUs) | ≤ 5 ms network delivery
-| QC2 | CAN bus load (20 ECUs) | ~60% (congested threshold)
+| QC2 | CAN bus load (20 ECUs) | ~35% (congested threshold)
 | QC3 | BEST_EFFORT drop rate | ~3%
 | QC4 | Safety watchdog (Deadline QoS, ECUStatus) | 100 ms deadline
 | QC5 | Liveliness lease duration | 500 ms (ECU crash detection)

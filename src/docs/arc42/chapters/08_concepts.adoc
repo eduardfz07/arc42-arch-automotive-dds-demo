@@ -78,7 +78,7 @@ The OTA state machine is a protocol shared between the UCM Master (`update_manag
 | INSTALLING | ECU (after verification)
 | REBOOTING | ECU (after installation)
 | DONE | ECU (after reboot)
-| ERROR | ECU (5% probability during INSTALLING)
+| ERROR | ECU (n% probability during INSTALLING)
 |===
 
 The `ECUStateUpdate` message published on `ECUStatus` contains: `ecu_id`, `state`, `progress_pct`, `firmware_version`, `timestamp`, `latency_ms`.

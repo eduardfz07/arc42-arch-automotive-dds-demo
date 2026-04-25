@@ -57,11 +57,10 @@ endif::arc42help[]
 |===
 |ID|Requirement
 | QR1 | OTA command delivery latency (network) shall be ≤ 5 ms for up to 20 ECUs under DDS multicast.
-| QR2 | CAN bus load shall not exceed 60% at 20 ECUs to remain in the comparison model's valid range.
-| QR3 | The simulated DDS network delivery shall use a Gaussian latency model (mean 2 ms, stddev 0.5 ms).
-| QR4 | `BEST_EFFORT` QoS shall simulate ~3% message drop to illustrate reliability trade-offs.
-| QR5 | The ECU fault injection probability (`_INSTALL_ERROR_PROB`) shall default to 5% for resilience demo.
-| QR6 | The system shall run on Python 3.8+ with no external DDS middleware dependency.
+| QR2 | The simulated DDS network delivery shall use a Gaussian latency model (mean 2 ms, stddev 0.5 ms).
+| QR3 | `BEST_EFFORT` QoS shall simulate ~3% message drop to illustrate reliability trade-offs.
+| QR4 | The ECU fault injection probability (`_INSTALL_ERROR_PROB`) shall default to 0% for resilience demo. Error can be injected through arguments in bash.
+| QR5 | The system shall run on Python 3.8+ with no external DDS middleware dependency.
 |===
 
 
@@ -96,6 +95,6 @@ endif::arc42help[]
 |Role/Name|Contact|Expectations
 | Demo presenter / engineer | — | Runs and presents the demo; needs clear real-time output and charts.
 | Automotive software architect | — | Wants to understand DDS vs CAN trade-offs in OTA context and AUTOSAR Adaptive mapping.
-| RTI (Real-Time Innovations) | — | Understands that this is a pure-Python simulation, not a real Connext DDS deployment.
+| Technical target audience | — | Understands that this is a pure-Python simulation, not a real Connext DDS deployment.
 | AUTOSAR Adaptive platform engineer | — | Expects UCM state machine to mirror `PackageManagement` states correctly.
 |===

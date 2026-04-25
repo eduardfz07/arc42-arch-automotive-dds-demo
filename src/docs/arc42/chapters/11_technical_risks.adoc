@@ -23,7 +23,7 @@ ifndef::imagesdir[:imagesdir: ../../images]
 | R2 | **Simulated latency diverges from real DDS** — the Gaussian model does not capture TCP retransmission, UDP fragmentation, or real network jitter. | Clearly documented as simulation. Presenter must note this to the audience.
 | R3 | **No real RTPS wire protocol** — the system cannot interoperate with real DDS participants (Connext, CycloneDDS). | By design (ADR-001). Not a production system.
 | R4 | **matplotlib dark theme rendering differences** — chart appearance may vary on different OS / display configurations. | Test with `--generate-sample` on the target presentation machine.
-| R5 | **`_INSTALL_ERROR_PROB` stochastic behavior** — demo may occasionally show 0 errors (all ECUs succeed) or 2+ errors, making the demo unpredictable. | Presenter should run the demo 1-2 times in advance to pick a representative run for recording.
+| R5 | ** If `_INSTALL_ERROR_PROB` > 0, stochastic behavior** — demo may occasionally show 0 errors (all ECUs succeed) or 2+ errors, making the demo unpredictable. | Presenter should run the demo 1-2 times in advance to pick a representative run for recording.
 |===
 
 === Technical Debts
